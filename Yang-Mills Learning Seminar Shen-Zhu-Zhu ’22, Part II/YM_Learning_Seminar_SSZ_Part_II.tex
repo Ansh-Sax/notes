@@ -1,4 +1,3 @@
-
 %%% --------------- DO NOT CHANGE THE FOLLOWING SECTION --------------------
 \documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
@@ -7,7 +6,6 @@
 \usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
 \usepackage{pgfplots}
@@ -21,6 +19,7 @@
 \usepackage{mathrsfs}
 \usepackage{stmaryrd}
 \usepackage{mathtools}
+\usepackage{biblatex}
 
 \pgfplotsset{compat=1.17}
 \tdplotsetmaincoords{65}{110}
@@ -161,6 +160,7 @@ $#1{AB}^\sigma$ $#1{H}^C$ $#1{\sin z}$ $#1{W}_n$}
     \title{Yang-Mills Learning Seminar: Shen-Zhu-Zhu '22, Part II}
     \date{October 17, 2025}
     \author{Ansh S.}
+    \addbibresource{bibliography.bib}
 
 % \fancyhead[RO]{MATH-UA 377 Fall 2022}
 \fancyhead[RO]{Shen-Zhu-Zhu ’22, Part II}
@@ -463,7 +463,7 @@ Next, we want to compute $(X_{\widebar e}Q_{\widebar e})(X_eQ_e) Q_p$. This lead
 
 \underline{Case 1:} $e=\widebar e$. Let $\widebar e=e=e_3$ in the above computation. Then,
 \begin{align*}
-    (X_{e_3}Q_{e_3})(X_{e_3}Q_{e_3}) Q_p&= (X_{e_3}Q_{e_3}) Q_{e_1}Q_{e_2}Q_{e_3}^*X_{e_3}*Q_{e_4}^*\\
+    (X_{e_3}Q_{e_3})(X_{e_3}Q_{e_3}) Q_p&= (X_{e_3}Q_{e_3}) Q_{e_1}Q_{e_2}Q_{e_3}^*X_{e_3}^*Q_{e_4}^*\\
     &= Q_{e_1}Q_{e_2}Q_{e_3}^* (X_{e_3}^*)^2 Q_{e_4}.
 \end{align*}
 We now estimate the trace:
@@ -472,7 +472,7 @@ We now estimate the trace:
     \intertext{using the cyclic invariance of the trace}
     &\leq |\tr(X_{e_3}^* (Q_{e_3}Q_{e_2}^*Q_{e_1}^*Q_{e_4} X_{e_3})^*)|
     \intertext{writing $Q'=I_N$, $Q''=Q_{e_3}Q_{e_2}^*Q_{e_1}^*Q_{e_4}$, and using Cauchy-Schwarz for the Hilbert-Schmidt inner product gives}
-    &\leq (\tr( Q'X_{e_3}(Q'X_{e_3})^* )^{1/2} (\tr( Q''X_{e_3}(Q''X_{e_3})^* )^{1/2}
+    &\leq (\tr( Q'X_{e_3}(Q'X_{e_3})^* ))^{1/2} (\tr( Q''X_{e_3}(Q''X_{e_3})^* ))^{1/2}
     \intertext{which using the bi-invariance of the metric is just}
     &=|X_{e_3}|^2.
 \end{align*}
@@ -487,12 +487,12 @@ The contribution from these diagonal terms to the Hessian will thus be bounded b
 
 \underline{Case 2:} $e\neq \widebar e$. Let's say $\widebar e=e_1$ in the original computation. Then
 \begin{align*}
-    (X_{e_1}Q_{e_1})(X_{e_3}Q_{e_3})Q_p&=(X_{e_1}Q_{e_1}) Q_{e_1}Q_{e_2}Q_{e_3}^*X_{e_3}*Q_{e_4}^*\\
+    (X_{e_1}Q_{e_1})(X_{e_3}Q_{e_3})Q_p&=(X_{e_1}Q_{e_1}) Q_{e_1}Q_{e_2}Q_{e_3}^*X_{e_3}^*Q_{e_4}^*\\
     &=X_{e_1}Q_{e_1}Q_{e_2}Q_{e_3}^*X_{e_3}^*Q_{e_4}
     \intertext{and the trace as before can be bounded by}
-    |(X_{e_1}Q_{e_1})(X_{e_3}Q_{e_3}) \Re\tr(Q_p)|&|\tr( X_{e_1}Q_{e_1}Q_{e_2}Q_{e_3}^* (Q_{e_4}X_{e_3})^* ),
+    |(X_{e_1}Q_{e_1})(X_{e_3}Q_{e_3}) \Re\tr(Q_p)|&\leq |\tr( X_{e_1}Q_{e_1}Q_{e_2}Q_{e_3}^* (Q_{e_4}X_{e_3})^* )|,
     \intertext{setting $Q'=Q_{e_1}Q_{e_2}Q_{e_3}^*$ and $Q''=Q_{e_4}$ gives}
-    &\leq (\tr( X_{e_1}Q'(X_{e_1}Q')^* )^{1/2} (\tr( Q''X_{e_3}(Q''X_{e_3})^* )^{1/2}\\
+    &\leq (\tr( X_{e_1}Q'(X_{e_1}Q')^* ))^{1/2} (\tr( Q''X_{e_3}(Q''X_{e_3})^* ))^{1/2}\\
     &=|X_{e_1}||X_{e_3}|
     \intertext{which using AM-GM inequality is}
     &\leq \frac{|X_{e_1}|^2+|X_{e_3}|^2}{2}.
@@ -515,8 +515,6 @@ Finally, using \eqref{eq:H2} and \eqref{eq:H3} in \eqref{eq:H1} gives
 \end{align*}
 \end{proof}
 
-
-\bibliographystyle{plain}
-\bibliography{bibliography.bib}
+\printbibliography
 
 \end{document}
