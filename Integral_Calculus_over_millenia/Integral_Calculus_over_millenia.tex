@@ -1,0 +1,276 @@
+%%% --------------- DO NOT CHANGE THE FOLLOWING SECTION --------------------
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta,calc,3d}
+\usepackage{fancyhdr}
+\usepackage{multirow, multicol}
+\usepackage{enumitem}
+\usepackage{tabu}
+\usepackage{hyperref}
+\usepackage{dsfont}
+\usepackage{mathrsfs}
+\usepackage{stmaryrd}
+\usepackage{mathtools}
+\usepackage{biblatex}
+
+\pgfplotsset{compat=1.17}
+\tdplotsetmaincoords{65}{110}
+
+\newtheorem{defn}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corr}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+\newtheorem{assmptn}{Assumption}
+\theoremstyle{definition}
+\newtheorem*{notation}{Notation}
+\usepackage{comment}
+\newenvironment{solution}{
+  \textbf{Solution.}}{}
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}\fnsymbol{footnote}}
+
+ \setlength{\headheight}{14.5pt}
+ \addtolength{\topmargin}{-2.5pt}
+
+
+%% ------------------ EXOTIC COMMANDS --------------------------------------
+
+%----------------- Widebar -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%See https://tex.stackexchange.com/questions/16337/can-i-get-a-widebar-without-using-the-mathabx-package?noredirect=1&lq=1
+
+\makeatletter
+\let\save@mathaccent\mathaccent
+\newcommand*\if@single[3]{%
+  \setbox0\hbox{${\mathaccent"0362{#1}}^H$}%
+  \setbox2\hbox{${\mathaccent"0362{\kern0pt#1}}^H$}%
+  \ifdim\ht0=\ht2 #3\else #2\fi
+  }
+%The bar will be moved to the right by a half of \macc@kerna, which is computed by amsmath:
+\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
+%If there's a superscript following the bar, then no negative kern may follow the bar;
+%an additional {} makes sure that the superscript is high enough in this case:
+\newcommand*\widebar[1]{\@ifnextchar^{{\wide@bar{#1}{0}}}{\wide@bar{#1}{1}}}
+%Use a separate algorithm for single symbols:
+\newcommand*\wide@bar[2]{\if@single{#1}{\wide@bar@{#1}{#2}{1}}{\wide@bar@{#1}{#2}{2}}}
+\newcommand*\wide@bar@[3]{%
+  \begingroup
+  \def\mathaccent##1##2{%
+%Enable nesting of accents:
+    \let\mathaccent\save@mathaccent
+%If there's more than a single symbol, use the first character instead (see below):
+    \if#32 \let\macc@nucleus\first@char \fi
+%Determine the italic correction:
+    \setbox\z@\hbox{$\macc@style{\macc@nucleus}_{}$}%
+    \setbox\tw@\hbox{$\macc@style{\macc@nucleus}{}_{}$}%
+    \dimen@\wd\tw@
+    \advance\dimen@-\wd\z@
+%Now \dimen@ is the italic correction of the symbol.
+    \divide\dimen@ 3
+    \@tempdima\wd\tw@
+    \advance\@tempdima-\scriptspace
+%Now \@tempdima is the width of the symbol.
+    \divide\@tempdima 10
+    \advance\dimen@-\@tempdima
+%Now \dimen@ = (italic correction / 3) - (Breite / 10)
+    \ifdim\dimen@>\z@ \dimen@0pt\fi
+%The bar will be shortened in the case \dimen@<0 !
+    \rel@kern{0.6}\kern-\dimen@
+    \if#31
+      \overline{\rel@kern{-0.6}\kern\dimen@\macc@nucleus\rel@kern{0.4}\kern\dimen@}%
+      \advance\dimen@0.4\dimexpr\macc@kerna
+%Place the combined final kern (-\dimen@) if it is >0 or if a superscript follows:
+      \let\final@kern#2%
+      \ifdim\dimen@<\z@ \let\final@kern1\fi
+      \if\final@kern1 \kern-\dimen@\fi
+    \else
+      \overline{\rel@kern{-0.6}\kern\dimen@#1}%
+    \fi
+  }%
+  \macc@depth\@ne
+  \let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
+  \mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
+  \macc@set@skewchar\relax
+  \let\mathaccentV\macc@nested@a
+%The following initialises \macc@kerna and calls \mathaccent:
+  \if#31
+    \macc@nested@a\relax111{#1}%
+  \else
+%If the argument consists of more than one symbol, and if the first token is
+%a letter, use that letter for the computations:
+    \def\gobble@till@marker##1\endmarker{}%
+    \futurelet\first@char\gobble@till@marker#1\endmarker
+    \ifcat\noexpand\first@char A\else
+      \def\first@char{}%
+    \fi
+    \macc@nested@a\relax111{\first@char}%
+  \fi
+  \endgroup
+}
+\makeatother
+\newcommand\test[1]{%
+$#1{M}$ $#1{A}$ $#1{g}$ $#1{\beta}$ $#1{\mathcal A}^q$
+$#1{AB}^\sigma$ $#1{H}^C$ $#1{\sin z}$ $#1{W}_n$}
+
+
+%------------------------ Laplace Transform --------------------------------
+%See https://tex.stackexchange.com/questions/239791/is-this-laplace-transform-symbol-available-in-latex
+
+\newsavebox\foobox
+\newlength{\foodim}
+\newcommand{\slantbox}[2][0]{\mbox{%
+        \sbox{\foobox}{#2}%
+        \foodim=#1\wd\foobox
+        \hskip \wd\foobox
+        \hskip -0.5\foodim
+        \pdfsave
+        \pdfsetmatrix{1 0 #1 1}%
+        \llap{\usebox{\foobox}}%
+        \pdfrestore
+        \hskip 0.5\foodim
+}}
+\def\Ell{\slantbox[-.45]{$\mathscr{L}$}}
+
+%% -------------------------------------------------------------------------
+
+%% ------------------------ FORMAT -----------------------------------------
+
+\parindent 0pt
+\parskip 10pt
+
+\setcounter{section}{-1}
+\pagestyle{fancy}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    }
+    
+% Title
+    \title{Integral Calculus over Millenia}
+    \date{}
+    \author{Ansh S.}
+    \addbibresource{bibliography.bib}
+
+% \fancyhead[RO]{MATH-UA 377 Fall 2022}
+\fancyhead[RO]{tegral Calculus over Millenia}
+\fancyhead[LO]{}
+\newenvironment{problems}
+{\begin{enumerate}[itemsep=30pt]}
+  {\end{enumerate}}
+\newenvironment{parts}
+{\begin{enumerate}[topsep=10pt,itemsep=20pt,label*=\arabic*.]}
+  {\end{enumerate}}
+
+
+\begin{document}
+\maketitle
+
+%% -------------------------------------------------------------------------
+
+%%% -------END OF SECTION THAT MUST BE LEFT UNCHANGED ----------------------
+
+
+%%% ------------------- SHORTCUTS ------------------------------------------
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\Rtilde}{\widetilde{\R}}
+\newcommand{\Rvec}{\widehat{\R}}
+\newcommand{\id}{\mathds{1}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\power}{\mathcal{P}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\schwartz}{\mathcal{S}}
+\newcommand{\dynkin}{\mathcal{D}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\cl}{\mathcal{C}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\no}{\textbf}
+\newcommand{\problem}[1]{\textbf{Problem #1}}
+
+\newcommand{\p}{\mathbb{P}}
+\newcommand{\e}{\mathbb{E}}
+\newcommand{\var}{\operatorname{Var}}
+\newcommand{\cov}{\operatorname{Cov}}
+
+\newcommand{\proj}{\operatorname{proj}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\tr}{\operatorname{Tr}}
+\newcommand{\ric}{\operatorname{Ric}}
+\newcommand{\hess}{\operatorname{Hess}}
+
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+%\overset{(d)}{\longrightarrow}
+
+%%% ------------------------------------------------------------------------
+
+I learned something quite astounding today -- the integral calculus was already known in some form to the greek mathematicians $\sim$2400 years ago!
+
+The story starts, to the best of our current knowledge, with \href{https://en.wikipedia.org/wiki/Sophistic_works_of_Antiphon}{Antiphon the Sophist}.
+Wikipedia states little about his life, other than that he lived in Athens in 400-420 BC. Apart from works on philosophy and politics, he was a very apt mathematician --
+his treatise {\it The Truth} covers these subjects and a lot more. What we are interested in is of course his work as a mathematician.
+He had tried to compute the area of a circle by inscribing it inside, and inscribing within it, polygons whose areas he did know how to compute.
+Supposedly he proposed carrying out this process over and over by doubling the sides of the polygons each time, so that the difference in areas eventually gets exhausted -- this should be compared to the \href{https://en.wikipedia.org/wiki/Squeeze_theorem}{Sandwich theorem}.
+This is the central idea of integral calculus, where one tries to compute the volume of an object by carrying out this process exhaustively, using shapes that approximate the object better and better in some sense.
+
+Antiphon certainly knew how to use his method to solve practical problems, but it is \href{https://mathshistory.st-andrews.ac.uk/Biographies/Antiphon/}{claimed} that he might not have understood it perfectly.
+He might have believed that his method produces a polygon with $\infty$-sides eventually which perfectly matches the circle, confusing his {\it limiting} process with the ``limit object".
+Also, while it is quite apparent that his method should provide better and better approximations to the area of the circle, he didn't prove this claim.
+
+It was \href{https://mathshistory.st-andrews.ac.uk/Biographies/Eudoxus/}{Eudoxus} who made the methods of Antiphon into his rigorous {\it method of exhaustion}.
+First, he didn't confuse between the limiting process and the erroneous belief of Antiphon that the limiting object is eventually achieved.
+Second, he provided rigorous proofs. To do so, he assumed the {\it Axiom of Exhaustion}, which appears in the books of Euclid, and is equivalent to the {\it Archimedian property} that $\R$ is constructed to have.
+Next, he proved that the area $A(D)$ of his limiting polygons matches that of the circle $A(C)$ eventually through a double contradiction -- assuming that $A(D)>A(C)$ and getting a contradiction, and the other way around too.
+He also managed to rigorously establish theorems such as:\\
+(i) The volume of the cone is one-third that of the cylinder with the same base and height.\\
+(ii) The volume of the pyramid is one-third that of the prism with the same base and height.\\
+(iii) The area of the circle scales as the square of its radius:
+\begin{align}\label{eq:E1}
+  \frac{A(C_1)}{A(C_2)}=\frac{R(C_1)^2}{R(C_2)^2}.
+\end{align}
+
+Archimedes (287-212 BC) used the method of exhaustion of Eudoxus to prove many remarkable theorems, some of which are listed \href{https://en.wikipedia.org/wiki/Method_of_exhaustion#cite_note-1}{here}.
+It seems to me that he took a more numerical-view point as compared to Eudoxus, who treated his numbers in abstract. For example, 
+while Eudoxus knew of the constantcy of $\frac{P(C)}{D(C)}$ [where $P$ is the perimeter / circumference, and $D$ is the diameter], he didn't treat this constant $\pi$. Archimedes managed to get the following bounds:
+\begin{align}\label{eq:A1}
+  3+\frac{10}{71} < \pi < 3+ \frac{10}{70}
+\end{align}
+which is accurate to two decimal places. This was proved using the method of exhaustion by doubling sides of polygons as proposed by Antiphon, but carrying out this process numerically in a viable way posed challenges,
+the resolution of which by Archimedes led to mathematical breakthroughs. Archimedes managed to prove the following exact formula for the area of the circle
+\begin{align}\label{eq:A2}
+  A(C)=\frac{1}{2}P(C)R(C)
+\end{align}
+which should be contrasted to Eudoxus' result that $A(C)\propto D(C)^2$. He also managed to compare lengths of curved lines to that of straight lines, proving that
+\begin{align}\label{eq:A3}
+  \begin{cases}
+    P(C)&<P(\text{circumscribed polygon }D)\\
+    P(C)&>P(\text{inscribed polygon }D)
+  \end{cases},
+\end{align}
+and finally he proved a result that allowed him to
+\begin{align}\label{eq:A4}
+  \text{compute $P(D_{2n})$ given he knew $P(D_{n})$}
+\end{align}
+by establishing a recursive formula.\\
+While I don't know if this is the path Archimedes took to prove \eqref{eq:A1}, it is certainly clear how \eqref{eq:A2}, \eqref{eq:A3}, and \eqref{eq:A4} would have allowed him to obtain it using Antiphon's scheme.
+
+\end{document}
